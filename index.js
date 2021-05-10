@@ -4,6 +4,9 @@ const beerDiv = document.querySelector('.beers');
 const filterABVForm = document.getElementById('filterABV');
 let filterABV = '';
 
+const filterIBUForm = document.getElementById('filterIBU');
+let filterIBU = '';
+
 filterABVForm.addEventListener('change', e => {
   const choice = e.target.value;
 
@@ -24,8 +27,28 @@ filterABVForm.addEventListener('change', e => {
   getBeers();
 });
 
+filterIBUForm.addEventListener('change', e => {
+  const choice = e.target.value;
+
+  switch (choice) {
+    case 'all':
+      break;
+    case 'weak':
+      filterIBU = '&ibu_lt=35';
+      break;
+    case 'medium':
+      filterIBU = '&ibu_gt=34&ibu_lt=75';
+      break;
+    case 'strong':
+      filterIBU = '&ibu_gt=74';
+      break;
+  }
+
+  getBeers();
+});
+
 async function getBeers() {
-  const url = beersUrl + filterABV;
+  const url = beersUrl + filterABV + filterIBU;
   const beersResponse = await fetch(url);
   const beers = await beersResponse.json();
 
