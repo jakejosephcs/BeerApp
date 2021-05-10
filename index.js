@@ -1,8 +1,32 @@
-const beersUrl = 'https://api.punkapi.com/v2/beers';
+const beersUrl = 'https://api.punkapi.com/v2/beers?';
 const beerDiv = document.querySelector('.beers');
 
+const filterABVForm = document.getElementById('filterABV');
+let filterABV = '';
+
+filterABVForm.addEventListener('change', e => {
+  const choice = e.target.value;
+
+  switch (choice) {
+    case 'all':
+      break;
+    case 'weak':
+      filterABV = '&abv_lt=4.6';
+      break;
+    case 'medium':
+      filterABV = '&abv_gt=4.5&abv_lt=7.6';
+      break;
+    case 'strong':
+      filterABV = '&abv_gt=7.5';
+      break;
+  }
+
+  getBeers();
+});
+
 async function getBeers() {
-  const beersResponse = await fetch(beersUrl);
+  const url = beersUrl + filterABV;
+  const beersResponse = await fetch(url);
   const beers = await beersResponse.json();
 
   let html = '';
