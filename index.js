@@ -1,4 +1,4 @@
-const beersUrl = 'https://api.punkapi.com/v2/beers?';
+const beersUrl = 'https://api.punkapi.com/v2/beers?page=';
 const beerDiv = document.querySelector('.beers');
 
 const filterABVForm = document.getElementById('filterABV');
@@ -6,6 +6,21 @@ let filterABV = '';
 
 const filterIBUForm = document.getElementById('filterIBU');
 let filterIBU = '';
+
+const pageNumber = document.getElementById('pageNumber');
+const nextPage = document.getElementById('nextPage');
+const prevPage = document.getElementById('prevPage');
+let page = 1;
+
+nextPage.addEventListener('click', () => {
+  page++;
+  getBeers();
+});
+
+prevPage.addEventListener('click', () => {
+  page--;
+  getBeers();
+});
 
 filterABVForm.addEventListener('change', e => {
   const choice = e.target.value;
@@ -24,6 +39,7 @@ filterABVForm.addEventListener('change', e => {
       break;
   }
 
+  page = 1;
   getBeers();
 });
 
@@ -44,13 +60,26 @@ filterIBUForm.addEventListener('change', e => {
       break;
   }
 
+  page = 1;
   getBeers();
 });
 
 async function getBeers() {
-  const url = beersUrl + filterABV + filterIBU;
+  const url = beersUrl + page + filterABV + filterIBU;
   const beersResponse = await fetch(url);
   const beers = await beersResponse.json();
+
+  if (page == 1) {
+    prevPage.disabled = true;
+  } else {
+    prevPage.disabled = false;
+  }
+
+  if (beers.length < 25) {
+    nextPage.disabled = true;
+  } else {
+    nextPage.disabled = false;
+  }
 
   let html = '';
 
@@ -78,6 +107,7 @@ async function getBeers() {
   }
 
   beerDiv.innerHTML = html;
+  pageNumber.textContent = page;
 }
 
 getBeers();
